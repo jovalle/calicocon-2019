@@ -1,0 +1,78 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: k8s-master2master-allowed-ports
+spec:
+  selector: k8s-master == "true"
+  order: 300
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      selector: k8s-master == "true"
+    destination:
+      ports: ["2379:2380", 4001, "10250:10256", 9099, 6443 ]
+  egress:
+  - action: Allow
+
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: k8s-outside2master-allowed-ports
+spec:
+  selector: k8s-master == "true"
+  order: 350
+  ingress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports: [10250, 6443]
+  - action: Allow
+    protocol: UDP
+    destination:
+      ports: [53]
+  egress:
+  - action: Allow
+
+
+---
+
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: k8s-outside2worker-allowed-ports
+spec:
+  selector: k8s-worker == "true"
+  order: 400
+  ingress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports: [10250, 10256 ]
+  egress:
+  - action: Allow
+---
+
+
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: block-k8s-nodeports
+spec:
+  selector: k8s-worker == "true"
+  order: 450
+  applyOnForward: true
+  preDNAT: true
+  ingress:
+  - action: Deny
+    protocol: TCP
+    destination:
+      ports: ["30000:32767"]
+  - action: Deny
+    protocol: UDP
+    destination:
+      ports: ["30000:32767"]
+
+
+

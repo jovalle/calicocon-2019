@@ -1,0 +1,73 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-yaobank-nodeport
+spec:
+  order: 425
+  selector: k8s-worker == "true"
+  applyOnForward: true
+  preDNAT: true
+  ingress:
+    - action: Allow
+      protocol: TCP
+      destination:
+        ports: [30180]
+  types:
+    - Ingress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-desired-clustervips
+spec:
+  order: 425
+  selector: k8s-worker == "true"
+  applyOnForward: true
+  preDNAT: true
+  ingress:
+    - action: Allow
+      destination:
+        nets:
+          - 10.49.0.0/16
+  types:
+    - Ingress
+
+---
+
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-desired-externalvips
+spec:
+  order: 425
+  selector: k8s-worker == "true"
+  applyOnForward: true
+  preDNAT: true
+  ingress:
+    - action: Allow
+      destination:
+        nets:
+          - 10.50.0.0/24
+  types:
+    - Ingress
+
+---
+
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-desired-podcidrs
+spec:
+  order: 425
+  selector: k8s-worker == "true"
+  applyOnForward: true
+  preDNAT: true
+  ingress:
+    - action: Allow
+      destination:
+        nets:
+          - 10.48.0.0/16
+  types:
+    - Ingress
+
+

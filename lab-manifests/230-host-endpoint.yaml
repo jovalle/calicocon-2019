@@ -1,0 +1,34 @@
+apiVersion: projectcalico.org/v3
+kind: HostEndpoint
+metadata:
+  name: master1
+  labels:
+    k8s-master: true
+    k8s-worker: true
+spec:
+  interfaceName: ens160
+  node: master1
+  expectedIPs: ["10.0.0.10"]
+---
+apiVersion: projectcalico.org/v3
+kind: HostEndpoint
+metadata:
+  name: worker1
+  labels:
+    k8s-worker: true
+spec:
+  interfaceName: ens160
+  node: worker1
+  expectedIPs: ["10.0.0.11"]
+---
+apiVersion: projectcalico.org/v3
+kind: HostEndpoint
+metadata:
+  name: worker2
+  labels:
+    k8s-worker: true
+spec:
+  interfaceName: ens160
+  node: worker2
+  expectedIPs: ["10.0.0.12"]
+---

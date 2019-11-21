@@ -1,0 +1,53 @@
+
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: dns-allow
+spec:
+  order: 600
+  selector: all()
+  egress:
+  - action: Allow
+    protocol: UDP
+    destination:
+      ports:
+      - 53
+      selector: k8s-app == "kube-dns"
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports:
+      - 53
+      selector: k8s-app == "kube-dns"
+  - action: Deny
+    protocol: UDP
+    destination:
+      ports:
+      - 53
+  - action: Deny
+    protocol: TCP
+    destination:
+      ports:
+      - 53
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: kubedns-allow-all
+  namespace: kube-system
+spec:
+  order: 500
+  selector: k8s-app == "kube-dns"
+  egress:
+  - action: Allow
+  ingress:
+  - action: Allow
+    protocol: UDP
+    destination:
+      ports:
+      - 53
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports:
+      - 53
